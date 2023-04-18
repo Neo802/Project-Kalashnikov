@@ -1,6 +1,6 @@
-# Proyekt Kalashnikov
+# Project Kalashnikov
 ## Description
-to be announced. 
+To be announced.
 
 ## Build
 Build 5, April 10th 2023
