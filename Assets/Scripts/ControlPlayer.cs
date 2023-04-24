@@ -11,13 +11,13 @@ namespace Com.Albert.Kalashnikova
         public float sprintModifier;
         public float jumpForce;
         public Camera normalCam;
+        public Transform groundDetector;
+        public LayerMask ground;
+
         private Rigidbody rig;
 
         private float baseFOV;
         private float sprintFOVModifier = 1.25f;
-
-        private bool jump;
-        private bool sprint;
 
         // Start is called before the first frame update
         void Start()
@@ -27,13 +27,6 @@ namespace Com.Albert.Kalashnikova
             rig = GetComponent<Rigidbody>();
         }
 
-        void Update()
-        {
-            // Controls
-            sprint = Input.GetKey(KeyCode.LeftShift); // left-shift is always easier to reach sooo
-            jump = Input.GetKeyDown(KeyCode.Space); // so that you jump lol
-        }
-
         // Update is called once per frame
         void FixedUpdate()
         {
@@ -41,10 +34,16 @@ namespace Com.Albert.Kalashnikova
             float t_hmove = Input.GetAxis("Horizontal");
             float t_vmove = Input.GetAxis("Vertical");
 
-            // States
-            bool isJumping = jump;
-            bool isSprinting = sprint && t_vmove > 0 && !isJumping;
+            // Controls
+            bool sprint = Input.GetKey(KeyCode.LeftShift); // left-shift is always easier to reach sooo
+            bool jump = Input.GetKeyDown(KeyCode.Space); // so that you jump lol
 
+            // States
+            bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
+            bool isJumping = jump && isGrounded;
+            bool isSprinting = sprint && t_vmove > 0 && !isJumping && isGrounded;
+
+            print(jump);
             // Jumping
             if (isJumping)
             {
@@ -54,9 +53,15 @@ namespace Com.Albert.Kalashnikova
             // Movement
             Vector3 t_direction = new Vector3(t_hmove, 0, t_vmove);
             t_direction.Normalize();
+
             float t_adjustedSpeed = speed;
-            
-            // FOV + WalkSpeed
+            if (isSprinting) t_adjustedSpeed *= sprintModifier;
+
+            Vector3 t_targetVelocity = transform.TransformDirection(t_direction) * t_adjustedSpeed * Time.deltaTime;
+            t_targetVelocity.y = rig.velocity.y;
+            rig.velocity = t_targetVelocity;
+
+            // FOV
             if (isSprinting)
             {
                 t_adjustedSpeed *= sprintModifier;
@@ -65,9 +70,6 @@ namespace Com.Albert.Kalashnikova
             else
                 normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV, Time.deltaTime * 8f);
 
-            Vector3 t_targetVelocity = transform.TransformDirection(t_direction) * t_adjustedSpeed * Time.deltaTime;
-            t_targetVelocity.y = rig.velocity.y;
-            rig.velocity = t_targetVelocity;
         }
     }
 }

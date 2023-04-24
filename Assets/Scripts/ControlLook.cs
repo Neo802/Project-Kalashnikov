@@ -11,6 +11,7 @@ namespace Com.Albert.Kalashnikova
 
         public Transform player;
         public Transform cams;
+        public Transform weapon;
 
         public float xSens; // sensitivity X
         public float ySens; // sensitivity Y
@@ -44,7 +45,12 @@ namespace Com.Albert.Kalashnikova
             Quaternion t_delta = cams.localRotation * t_adj;
 
             if (Quaternion.Angle(camCenter, t_delta) < maxAngle)
+            {
                 cams.localRotation = t_delta;
+                weapon.localRotation = t_delta;
+            }
+
+            weapon.rotation = cams.rotation;
         }
 
         void setX()
