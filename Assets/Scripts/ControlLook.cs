@@ -6,6 +6,9 @@ namespace Com.Albert.Kalashnikova
 {
     public class ControlLook : MonoBehaviour
     {
+
+        #region Variables
+
         public static bool cursorLocked = true;
         public static bool cameraEnabled = cursorLocked;
 
@@ -19,6 +22,9 @@ namespace Com.Albert.Kalashnikova
 
         private Quaternion camCenter;
 
+        #endregion
+
+        #region Monobehaviour Callbacks
         // Start is called before the first frame update
         void Start()
         {
@@ -37,7 +43,9 @@ namespace Com.Albert.Kalashnikova
 
             updateCursorLock();
         }
+        #endregion
 
+        #region Private Methods
         void setY()
         {
             float t_input = Input.GetAxis("Mouse Y") * ySens * Time.deltaTime;
@@ -86,6 +94,7 @@ namespace Com.Albert.Kalashnikova
                 }
             }
         }
+        #endregion
 
     }
 }

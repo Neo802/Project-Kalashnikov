@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5785055048821111077}
   - component: {fileID: 5785055048821111076}
   - component: {fileID: 5785055048821111079}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5785055049265898472}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Resources
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,7 +137,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5785055049416073158}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: States
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -170,7 +170,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5785055049499266158}
-  m_Layer: 0
+  - component: {fileID: 4675599822605255423}
+  m_Layer: 8
   m_Name: Pistol
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -192,8 +193,22 @@ Transform:
   - {fileID: 5785055050289109067}
   - {fileID: 5785055049416073158}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4675599822605255423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5785055049499266161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af81d798f357b134a9b88d3569018fae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  intensity: 1
+  smooth: 10
 --- !u!1 &5785055049513469937
 GameObject:
   m_ObjectHideFlags: 0
@@ -206,7 +221,7 @@ GameObject:
   - component: {fileID: 5785055049513469933}
   - component: {fileID: 5785055049513469932}
   - component: {fileID: 5785055049513469935}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -300,7 +315,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5785055049986497831}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Hip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -315,7 +330,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5785055049986497830}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.374, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -331,7 +346,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5785055050289109067}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Anchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -346,7 +361,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5785055050289109066}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.374, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -364,7 +379,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5785055050322541241}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ADS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -379,7 +394,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5785055050322541240}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.391, y: 0.096, z: 0}
+  m_LocalPosition: {x: -0.391, y: -0.27, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -395,7 +410,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5785055050346696276}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Design
   m_TagString: Untagged
   m_Icon: {fileID: 0}

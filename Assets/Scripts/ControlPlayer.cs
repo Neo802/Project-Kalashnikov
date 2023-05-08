@@ -7,17 +7,30 @@ namespace Com.Albert.Kalashnikova
     public class ControlPlayer : MonoBehaviour
     {
 
+        #region Variables
+
         public float speed;
         public float sprintModifier;
         public float jumpForce;
         public Camera normalCam;
+        public Transform weaponParent;
         public Transform groundDetector;
         public LayerMask ground;
 
         private Rigidbody rig;
 
+        private Vector3 targetWeaponBobPosition;
+        private Vector3 weaponParentOrigin;
+
+        private float movementCounter;
+        private float idleCounter;
+        
         private float baseFOV;
         private float sprintFOVModifier = 1.25f;
+
+        #endregion
+
+        #region Monobehaviour Callbacks
 
         // Start is called before the first frame update
         void Start()
@@ -25,7 +38,51 @@ namespace Com.Albert.Kalashnikova
             baseFOV = normalCam.fieldOfView;
             Camera.main.enabled = false;
             rig = GetComponent<Rigidbody>();
+            weaponParentOrigin = weaponParent.localPosition;
         }
+
+        void Update()
+        {   // so the logic remains the same
+            // Axles
+            float t_hmove = Input.GetAxis("Horizontal");
+            float t_vmove = Input.GetAxis("Vertical");
+
+            // Controls
+            bool sprint = Input.GetKey(KeyCode.LeftShift); // left-shift is always easier to reach sooo
+            bool jump = Input.GetKeyDown(KeyCode.Space); // so that you jump lol
+
+            // States
+            bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
+            bool isJumping = jump && isGrounded;
+            bool isSprinting = sprint && t_vmove > 0 && !isJumping && isGrounded;
+
+            // Jumping
+            if (isJumping)
+            {
+                rig.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            }
+
+            // head bob
+            if (t_hmove == 0 && t_vmove == 0) 
+            { 
+                HeadBob(idleCounter, 0.025f, 0.025f); 
+                idleCounter += Time.deltaTime;
+                weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 2f);
+            }
+            else if (!isSprinting)
+            {
+                HeadBob(movementCounter, 0.035f, 0.035f); 
+                movementCounter += Time.deltaTime * 3f;
+                weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 6f);
+            }
+            else
+            {
+                HeadBob(movementCounter, 0.15f, 0.075f);
+                movementCounter += Time.deltaTime * 7f;
+                weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
+            }
+
+    }
 
         // Update is called once per frame
         void FixedUpdate()
@@ -42,13 +99,6 @@ namespace Com.Albert.Kalashnikova
             bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
             bool isJumping = jump && isGrounded;
             bool isSprinting = sprint && t_vmove > 0 && !isJumping && isGrounded;
-
-            print(jump);
-            // Jumping
-            if (isJumping)
-            {
-                rig.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            }
 
             // Movement
             Vector3 t_direction = new Vector3(t_hmove, 0, t_vmove);
@@ -71,5 +121,17 @@ namespace Com.Albert.Kalashnikova
                 normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV, Time.deltaTime * 8f);
 
         }
+
+        #endregion
+
+        #region Private Methods
+
+        void HeadBob(float p_z, float p_x_intensity, float p_y_intensity)
+        {
+            targetWeaponBobPosition = weaponParentOrigin + new Vector3(Mathf.Cos(p_z) * p_x_intensity, Mathf.Sin(p_z * 2) * p_y_intensity, 0);
+        }
+
+        #endregion
+
     }
 }

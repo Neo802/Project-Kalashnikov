@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: M1911
   firerate: 5000
+  aimSpeed: 7
   prefab: {fileID: 5785055049499266161, guid: 178751eabcfbf3f48b10010e45a1aa8d, type: 3}
