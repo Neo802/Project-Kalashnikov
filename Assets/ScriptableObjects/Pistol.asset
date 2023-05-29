@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: Pistol
   m_EditorClassIdentifier: 
   name: M1911
-  firerate: 5000
+  damage: 5
+  firerate: 0.05
+  bloom: 20
+  recoil: 10
+  kickback: 0.15
   aimSpeed: 7
   prefab: {fileID: 5785055049499266161, guid: 178751eabcfbf3f48b10010e45a1aa8d, type: 3}

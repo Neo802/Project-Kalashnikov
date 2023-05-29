@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 namespace Com.Albert.Kalashnikova
 {
-    public class ControlPlayer : MonoBehaviour
+    public class ControlPlayer : MonoBehaviourPunCallbacks
     {
 
         #region Variables
@@ -13,6 +14,7 @@ namespace Com.Albert.Kalashnikova
         public float sprintModifier;
         public float jumpForce;
         public Camera normalCam;
+        public GameObject cameraParent;
         public Transform weaponParent;
         public Transform groundDetector;
         public LayerMask ground;
@@ -28,6 +30,11 @@ namespace Com.Albert.Kalashnikova
         private float baseFOV;
         private float sprintFOVModifier = 1.25f;
 
+        private int current_health;
+        public int max_health;
+
+        private Manager manager;
+
         #endregion
 
         #region Monobehaviour Callbacks
@@ -35,14 +42,22 @@ namespace Com.Albert.Kalashnikova
         // Start is called before the first frame update
         void Start()
         {
+            manager = GameObject.Find("Manager").GetComponent<Manager>();
+            current_health = max_health;
+            cameraParent.SetActive(photonView.IsMine);
+
+            if (!photonView.IsMine) gameObject.layer = 9;
+
             baseFOV = normalCam.fieldOfView;
-            Camera.main.enabled = false;
+            if (Camera.main) Camera.main.enabled = false;
             rig = GetComponent<Rigidbody>();
             weaponParentOrigin = weaponParent.localPosition;
         }
 
         void Update()
         {   // so the logic remains the same
+            if (!photonView.IsMine) return;
+
             // Axles
             float t_hmove = Input.GetAxis("Horizontal");
             float t_vmove = Input.GetAxis("Vertical");
@@ -51,16 +66,20 @@ namespace Com.Albert.Kalashnikova
             bool sprint = Input.GetKey(KeyCode.LeftShift); // left-shift is always easier to reach sooo
             bool jump = Input.GetKeyDown(KeyCode.Space); // so that you jump lol
 
+            bool aim = Input.GetMouseButton(1);
+
             // States
             bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
             bool isJumping = jump && isGrounded;
-            bool isSprinting = sprint && t_vmove > 0 && !isJumping && isGrounded;
+            bool isSprinting = sprint && t_vmove > 0 && !isJumping && isGrounded && !aim;
 
             // Jumping
             if (isJumping)
             {
                 rig.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             }
+
+            if (Input.GetKeyDown(KeyCode.U)) TakeDamage(50); 
 
             // head bob
             if (t_hmove == 0 && t_vmove == 0) 
@@ -81,12 +100,13 @@ namespace Com.Albert.Kalashnikova
                 movementCounter += Time.deltaTime * 7f;
                 weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
             }
-
-    }
+        }
 
         // Update is called once per frame
         void FixedUpdate()
         {
+            if (!photonView.IsMine) return;
+
             // Axles
             float t_hmove = Input.GetAxis("Horizontal");
             float t_vmove = Input.GetAxis("Vertical");
@@ -95,10 +115,12 @@ namespace Com.Albert.Kalashnikova
             bool sprint = Input.GetKey(KeyCode.LeftShift); // left-shift is always easier to reach sooo
             bool jump = Input.GetKeyDown(KeyCode.Space); // so that you jump lol
 
+            bool aim = Input.GetMouseButton(1);
+
             // States
             bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
             bool isJumping = jump && isGrounded;
-            bool isSprinting = sprint && t_vmove > 0 && !isJumping && isGrounded;
+            bool isSprinting = sprint && t_vmove > 0 && !isJumping && isGrounded && !aim;
 
             // Movement
             Vector3 t_direction = new Vector3(t_hmove, 0, t_vmove);
@@ -132,6 +154,28 @@ namespace Com.Albert.Kalashnikova
         }
 
         #endregion
+
+        #region Public Methods
+
+        public void TakeDamage(int p_damage)
+        {
+            if (photonView.IsMine)
+            {
+                current_health -= p_damage;
+                Debug.Log(current_health);
+
+                if (current_health <= 0)
+                {
+                    manager.Spawn();
+                    PhotonNetwork.Destroy(gameObject);
+                    Debug.Log("You are dead!");
+                }
+
+            } // until I add healthbars, after that, photonView will be removed
+        }
+
+        #endregion 
+
 
     }
 }

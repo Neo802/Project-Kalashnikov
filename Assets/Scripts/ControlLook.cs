@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 namespace Com.Albert.Kalashnikova
 {
-    public class ControlLook : MonoBehaviour
+    public class ControlLook : MonoBehaviourPunCallbacks
     {
 
         #region Variables
@@ -35,6 +36,8 @@ namespace Com.Albert.Kalashnikova
         // Update is called once per frame
         void Update()
         {
+            if (!photonView.IsMine) return;
+
             if (cameraEnabled)
             {
                 setY();
