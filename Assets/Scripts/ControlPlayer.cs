@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using Photon.Pun;
 
@@ -19,6 +20,9 @@ namespace Com.Albert.Kalashnikova
         public Transform groundDetector;
         public LayerMask ground;
 
+        private Transform ui_healthbar;
+        private Text ui_ammo;
+
         private Rigidbody rig;
 
         private Vector3 targetWeaponBobPosition;
@@ -34,6 +38,7 @@ namespace Com.Albert.Kalashnikova
         public int max_health;
 
         private Manager manager;
+        private Weapon weapon;
 
         #endregion
 
@@ -43,6 +48,8 @@ namespace Com.Albert.Kalashnikova
         void Start()
         {
             manager = GameObject.Find("Manager").GetComponent<Manager>();
+            weapon = GetComponent<Weapon>();
+
             current_health = max_health;
             cameraParent.SetActive(photonView.IsMine);
 
@@ -50,8 +57,16 @@ namespace Com.Albert.Kalashnikova
 
             baseFOV = normalCam.fieldOfView;
             if (Camera.main) Camera.main.enabled = false;
+
             rig = GetComponent<Rigidbody>();
             weaponParentOrigin = weaponParent.localPosition;
+            
+            if (photonView.IsMine)
+            {
+                ui_healthbar = GameObject.Find("HUD/Health/Bar").transform;
+                ui_ammo = GameObject.Find("HUD/Ammo/Text").GetComponent<Text>();
+                RefreshHealthBar();
+            }
         }
 
         void Update()
@@ -100,6 +115,10 @@ namespace Com.Albert.Kalashnikova
                 movementCounter += Time.deltaTime * 7f;
                 weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
             }
+
+            // UI Refreshes
+            RefreshHealthBar();
+            weapon.RefreshAmmo(ui_ammo);
         }
 
         // Update is called once per frame
@@ -153,6 +172,12 @@ namespace Com.Albert.Kalashnikova
             targetWeaponBobPosition = weaponParentOrigin + new Vector3(Mathf.Cos(p_z) * p_x_intensity, Mathf.Sin(p_z * 2) * p_y_intensity, 0);
         }
 
+        void RefreshHealthBar()
+        {
+            float t_health_ratio = (float)current_health / (float)max_health;
+            ui_healthbar.localScale = Vector3.Lerp(ui_healthbar.localScale, new Vector3(t_health_ratio, 1, 1), Time.deltaTime * 8f);
+        }
+
         #endregion
 
         #region Public Methods
@@ -162,7 +187,7 @@ namespace Com.Albert.Kalashnikova
             if (photonView.IsMine)
             {
                 current_health -= p_damage;
-                Debug.Log(current_health);
+                RefreshHealthBar();
 
                 if (current_health <= 0)
                 {
@@ -171,7 +196,7 @@ namespace Com.Albert.Kalashnikova
                     Debug.Log("You are dead!");
                 }
 
-            } // until I add healthbars, after that, photonView will be removed
+            }
         }
 
         #endregion 

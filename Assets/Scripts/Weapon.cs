@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using Photon.Pun;
 
@@ -17,31 +18,46 @@ namespace Com.Albert.Kalashnikova
         private float currentCooldown;
         private int currentIndex;
         private GameObject currentWeapon;
+        private bool isReloading;
 
         #endregion
 
         #region Monobehaviour Callbacks
 
+        private void Start()
+        {
+            foreach (Gun a in loadout) a.Initialize();
+        }
+
         // Update is called once per frame
         void Update()
         {
-            if (!photonView.IsMine) return;
-            if (Input.GetKeyDown(KeyCode.Alpha1)) { photonView.RPC("Equip", RpcTarget.All, 0); }
+            //if (!photonView.IsMine) return;
+            if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha1)) { photonView.RPC("Equip", RpcTarget.All, 0); }
+            if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha2)) { photonView.RPC("Equip", RpcTarget.All, 1); }
 
             if (currentWeapon != null)
             {
-                Aim(Input.GetMouseButton(1));
-
-                if ((Input.GetMouseButton(0) || Input.GetKeyDown(KeyCode.LeftControl)) && currentCooldown <= 0)
+                if (photonView.IsMine)
                 {
-                    photonView.RPC("Shoot", RpcTarget.All);
+                    Aim(Input.GetMouseButton(1));
+                    Sprint(Input.GetKey(KeyCode.LeftShift));
+
+                    if (Input.GetMouseButton(0) && currentCooldown <= 0)
+                    {
+                        if (loadout[currentIndex].FireBullet()) photonView.RPC("Shoot", RpcTarget.All);
+                        else StartCoroutine(Reload(loadout[currentIndex].reload));
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload(loadout[currentIndex].reload));
+
+                    // cooldown
+                    if (currentCooldown > 0) currentCooldown -= Time.deltaTime;
                 }
+
 
                 // weapon position elasticity
                 currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
-
-                // cooldown
-                if (currentCooldown > 0) currentCooldown -= Time.deltaTime;
             }
         }
 
@@ -49,11 +65,38 @@ namespace Com.Albert.Kalashnikova
 
         #region Private Methods
 
+        public void RefreshAmmo(Text p_text)
+        {
+            int t_clip = loadout[currentIndex].GetClip();
+            int t_stash = loadout[currentIndex].GetStash();
+
+            p_text.text = t_clip.ToString() + " / " + t_stash.ToString();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        IEnumerator Reload(float p_wait)
+        {
+            isReloading = true;
+            currentWeapon.SetActive(false);
+
+            yield return new WaitForSeconds(p_wait);
+
+            loadout[currentIndex].Reload();
+            currentWeapon.SetActive(true);
+            isReloading = false;
+        }
+
         [PunRPC]
         void Equip(int p_ind)
         {
-            if (currentWeapon != null) Destroy(currentWeapon);
-
+            if (currentWeapon != null)
+            {
+                if (isReloading) StopCoroutine("Reload");
+                Destroy(currentWeapon);
+            }
             currentIndex = p_ind;
 
             GameObject t_newEquipment = Instantiate(loadout[p_ind].prefab, weaponParent.position, weaponParent.rotation, weaponParent) as GameObject;
@@ -85,9 +128,12 @@ namespace Com.Albert.Kalashnikova
 
             if (Physics.Raycast(t_spawn.position, t_bloom, out t_hit, 1000f, canBeShot))
             {
-                GameObject t_newHole = Instantiate(bulletholePrefab, t_hit.point + t_hit.normal * 0.001f, Quaternion.identity) as GameObject;
-                t_newHole.transform.LookAt(t_hit.point + t_hit.normal);
-                Destroy(t_newHole, 5f);
+                if (t_hit.collider.gameObject.layer != 9)
+                {
+                    GameObject t_newHole = Instantiate(bulletholePrefab, t_hit.point + t_hit.normal * 0.001f, Quaternion.identity) as GameObject;
+                    t_newHole.transform.LookAt(t_hit.point + t_hit.normal);
+                    Destroy(t_newHole, 5f);
+                }
 
                 if (photonView.IsMine)
                 {
@@ -113,7 +159,6 @@ namespace Com.Albert.Kalashnikova
             GetComponent<ControlPlayer>().TakeDamage(p_damage);
         }
 
-
         void Aim(bool p_isAiming)
         {
             Transform t_anchor = currentWeapon.transform.Find("Anchor");
@@ -124,13 +169,36 @@ namespace Com.Albert.Kalashnikova
             {
                 // aim
                 t_anchor.position = Vector3.Lerp(t_anchor.position, t_state_ads.position, Time.deltaTime * loadout[currentIndex].aimSpeed);
+                t_anchor.rotation = Quaternion.Lerp(t_anchor.rotation, t_state_ads.rotation, Time.deltaTime * loadout[currentIndex].aimSpeed);
             }
             else
             {
                 // hip
                 t_anchor.position = Vector3.Lerp(t_anchor.position, t_state_hip.position, Time.deltaTime * loadout[currentIndex].aimSpeed);
+                t_anchor.rotation = Quaternion.Lerp(t_anchor.rotation, t_state_hip.rotation, Time.deltaTime * loadout[currentIndex].aimSpeed);
             }
+        }
 
+        void Sprint(bool p_isSprinting)
+        {
+            Transform t_anchor = currentWeapon.transform.Find("Anchor");
+            Transform t_state_sprint = currentWeapon.transform.Find("States/Sprint");
+            Transform t_state_hip = currentWeapon.transform.Find("States/Hip");
+
+            if (t_state_sprint == null) return;
+
+            if (p_isSprinting)
+            {
+                // sprint
+                t_anchor.position = Vector3.Lerp(t_anchor.position, t_state_sprint.position, Time.deltaTime * loadout[currentIndex].aimSpeed);
+                t_anchor.rotation = Quaternion.Lerp(t_anchor.rotation, t_state_sprint.rotation, Time.deltaTime * loadout[currentIndex].aimSpeed);
+            }
+            else
+            {
+                // hip
+                t_anchor.position = Vector3.Lerp(t_anchor.position, t_state_hip.position, Time.deltaTime * loadout[currentIndex].aimSpeed);
+                t_anchor.rotation = Quaternion.Lerp(t_anchor.rotation, t_state_hip.rotation, Time.deltaTime * loadout[currentIndex].aimSpeed);
+            }
         }
 
         #endregion

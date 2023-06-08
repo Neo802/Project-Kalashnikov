@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 31b6ca5dbcac2644bbbb6ced86fada19, type: 3}
-  m_Name: Pistol
+  m_Name: AK-47
   m_EditorClassIdentifier: 
-  name: M1911
-  ammo: 20
-  clipsize: 8
-  damage: 15
-  firerate: 1
+  name: AK-47
+  ammo: 120
+  clipsize: 30
+  damage: 3
+  firerate: 0.15
   bloom: 20
   recoil: 7
   kickback: 0.15
   aimSpeed: 7
   reload: 1
-  prefab: {fileID: 5785055049499266161, guid: 178751eabcfbf3f48b10010e45a1aa8d, type: 3}
+  prefab: {fileID: 3879524009150669904, guid: 0155ade970f9d3f4b8a90e2ad2466f92, type: 3}

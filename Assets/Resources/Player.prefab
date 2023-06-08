@@ -411,6 +411,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadout:
   - {fileID: 11400000, guid: c222c386f92b01147b20d7137e1d21a1, type: 2}
+  - {fileID: 11400000, guid: 9d2becbd89b8d8c4897f607842280803, type: 2}
   weaponParent: {fileID: 7602703689075935291}
   bulletholePrefab: {fileID: 1036203404154956006, guid: e0209c89f8ce32c4080380b2946e2b01, type: 3}
   canBeShot:
