@@ -1,6 +1,4 @@
 # Project Kalashnikov
-## Description
-To be announced.
 
 ## Build
-June 8th 2023
+June 12th 2023
