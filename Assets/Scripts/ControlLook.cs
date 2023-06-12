@@ -37,6 +37,7 @@ namespace Com.Albert.Kalashnikova
         void Update()
         {
             if (!photonView.IsMine) return;
+            if (Pause.paused) return;
 
             if (cameraEnabled)
             {
@@ -78,23 +79,6 @@ namespace Com.Albert.Kalashnikova
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
-
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    cursorLocked = false;
-                    cameraEnabled = cursorLocked;
-                }
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    cursorLocked = true;
-                    cameraEnabled = cursorLocked;
-                }
             }
         }
         #endregion

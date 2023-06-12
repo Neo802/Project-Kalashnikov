@@ -3,55 +3,60 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class Sway : MonoBehaviour
+
+namespace Com.Albert.Kalashnikova
 {
-    #region Variables
+    public class Sway : MonoBehaviour
+    {
+        #region Variables
 
-    public float intensity;
-    public float smooth;
-    public bool isMine;
+        public float intensity;
+        public float smooth;
+        public bool isMine;
 
-    private Quaternion origin_rotation;
+        private Quaternion origin_rotation;
 
-    #endregion
+        #endregion
 
-    #region Monobehaviour Callbacks
+        #region Monobehaviour Callbacks
     
-    private void Start()
-    {
-        origin_rotation = transform.localRotation;
-    }
-
-    private void Update()
-    {
-        UpdateSway();
-    }
-
-    #endregion
-
-    #region Private Methods
-
-    private void UpdateSway()
-    {
-        //controls
-        float t_x_mouse = Input.GetAxis("Mouse X");
-        float t_y_mouse = Input.GetAxis("Mouse Y");
-
-        if (!isMine)
+        private void Start()
         {
-            t_x_mouse = 0;
-            t_y_mouse = 0;
+            origin_rotation = transform.localRotation;
         }
 
-        //calculate target rotation
-        Quaternion t_x_adj = Quaternion.AngleAxis(-intensity * t_x_mouse, Vector3.up);
-        Quaternion t_y_adj = Quaternion.AngleAxis(intensity * t_y_mouse, Vector3.up);
-        Quaternion target_rotation = origin_rotation * t_x_adj * t_y_adj;
+        private void Update()
+        {
+            if (Pause.paused) return;
+            UpdateSway();
+        }
 
-        //rotate towards target rotation
-        transform.localRotation = Quaternion.Lerp(transform.localRotation, target_rotation, Time.deltaTime * smooth);
+        #endregion
 
+        #region Private Methods
+
+        private void UpdateSway()
+        {
+            //controls
+            float t_x_mouse = Input.GetAxis("Mouse X");
+            float t_y_mouse = Input.GetAxis("Mouse Y");
+
+            if (!isMine)
+            {
+                t_x_mouse = 0;
+                t_y_mouse = 0;
+            }
+
+            //calculate target rotation
+            Quaternion t_x_adj = Quaternion.AngleAxis(-intensity * t_x_mouse, Vector3.up);
+            Quaternion t_y_adj = Quaternion.AngleAxis(intensity * t_y_mouse, Vector3.up);
+            Quaternion target_rotation = origin_rotation * t_x_adj * t_y_adj;
+
+            //rotate towards target rotation
+            transform.localRotation = Quaternion.Lerp(transform.localRotation, target_rotation, Time.deltaTime * smooth);
+
+        }
+
+        #endregion
     }
-
-    #endregion
 }

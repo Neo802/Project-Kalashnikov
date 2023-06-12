@@ -15,7 +15,7 @@ namespace Com.Albert.Kalashnikova
 
         public override void OnConnectedToMaster()
         {
-            Join();
+            //Join();
 
             base.OnConnectedToMaster();
         }
@@ -36,7 +36,7 @@ namespace Com.Albert.Kalashnikova
 
         public void Connect()
         {
-            PhotonNetwork.GameVersion = "0.4.0";
+            PhotonNetwork.GameVersion = "0.5.0";
             PhotonNetwork.ConnectUsingSettings();
         }
 

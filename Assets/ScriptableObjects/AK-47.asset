@@ -15,7 +15,7 @@ MonoBehaviour:
   name: AK-47
   ammo: 120
   clipsize: 30
-  damage: 3
+  damage: 5
   firerate: 0.15
   bloom: 20
   recoil: 7

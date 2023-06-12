@@ -85,7 +85,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7602703687317043426}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!114 &7602703687317043424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -266,6 +266,8 @@ GameObject:
   - component: {fileID: 7602703688496526087}
   - component: {fileID: -9041851160072574427}
   - component: {fileID: 2922969640000129580}
+  - component: {fileID: -4530277045299702981}
+  - component: {fileID: 2413314441761132931}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -369,7 +371,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 100
-  sprintModifier: 1.5
+  sprintModifier: 2
   jumpForce: 500
   normalCam: {fileID: 7602703688695912752}
   cameraParent: {fileID: 7602703687317043426}
@@ -379,6 +381,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   max_health: 100
+  current_health: 1
 --- !u!114 &7602703688496526081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -417,6 +420,7 @@ MonoBehaviour:
   canBeShot:
     serializedVersion: 2
     m_Bits: 631
+  currentIndex: 0
 --- !u!54 &7602703688496526087
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -472,6 +476,32 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!114 &-4530277045299702981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7602703688496526086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3180ea998d423d343a5f5b93e1145939, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2413314441761132931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7602703688496526086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec15cd80dddd4af4db720b59954656d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  regenRate: 1
+  regenInterval: 1
 --- !u!1 &7602703688594853996
 GameObject:
   m_ObjectHideFlags: 0

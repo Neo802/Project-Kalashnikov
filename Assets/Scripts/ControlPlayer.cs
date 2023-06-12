@@ -34,8 +34,8 @@ namespace Com.Albert.Kalashnikova
         private float baseFOV;
         private float sprintFOVModifier = 1.25f;
 
-        private int current_health;
         public int max_health;
+        public int current_health = 1;
 
         private Manager manager;
         private Weapon weapon;
@@ -80,6 +80,7 @@ namespace Com.Albert.Kalashnikova
             // Controls
             bool sprint = Input.GetKey(KeyCode.LeftShift); // left-shift is always easier to reach sooo
             bool jump = Input.GetKeyDown(KeyCode.Space); // so that you jump lol
+            bool pause = Input.GetKeyDown(KeyCode.Escape); // so that you pause lol
 
             bool aim = Input.GetMouseButton(1);
 
@@ -88,13 +89,31 @@ namespace Com.Albert.Kalashnikova
             bool isJumping = jump && isGrounded;
             bool isSprinting = sprint && t_vmove > 0 && !isJumping && isGrounded && !aim;
 
+            // Pause
+
+            if (pause)
+            {
+                GameObject.Find("Pause").GetComponent<Pause>().TogglePause();
+            }
+
+            if (Pause.paused)
+            {
+                t_hmove = 0f;
+                t_vmove = 0f;
+                sprint = false;
+                jump = false;
+                isGrounded = false;
+                isJumping = false;
+                isSprinting = false;
+            }
+
             // Jumping
             if (isJumping)
             {
                 rig.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             }
 
-            if (Input.GetKeyDown(KeyCode.U)) TakeDamage(50); 
+            //if (Input.GetKeyDown(KeyCode.U)) TakeDamage(50); 
 
             // head bob
             if (t_hmove == 0 && t_vmove == 0) 
@@ -140,6 +159,18 @@ namespace Com.Albert.Kalashnikova
             bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
             bool isJumping = jump && isGrounded;
             bool isSprinting = sprint && t_vmove > 0 && !isJumping && isGrounded && !aim;
+
+            // Pause
+            if (Pause.paused)
+            {
+                t_hmove = 0f;
+                t_vmove = 0f;
+                sprint = false;
+                jump = false;
+                isGrounded = false;
+                isJumping = false;
+                isSprinting = false;
+            }
 
             // Movement
             Vector3 t_direction = new Vector3(t_hmove, 0, t_vmove);
@@ -196,6 +227,10 @@ namespace Com.Albert.Kalashnikova
                     Debug.Log("You are dead!");
                 }
 
+                if (current_health > max_health)
+                {
+                    current_health = max_health;
+                }
             }
         }
 

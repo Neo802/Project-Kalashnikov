@@ -26,6 +26,7 @@ namespace Com.Albert.Kalashnikova
 
         private int stash; // current ammo
         private int clip; // current clip
+        private int localdamage; // damage
 
         public void Initialize()
         {
@@ -33,6 +34,7 @@ namespace Com.Albert.Kalashnikova
 
             stash = ammo;
             clip = clipsize;
+            localdamage = damage;
         }
 
         public bool FireBullet()
@@ -54,5 +56,8 @@ namespace Com.Albert.Kalashnikova
 
         public int GetStash() { return stash; }
         public int GetClip() { return clip; }
+        public int GetDamage() { return localdamage; }
+        public void AddAmmo(int amount) { stash += amount; }
+        public void Multiply(int multiplier) { localdamage *= multiplier; Debug.Log("Weapon damage upgraded! New damage: " + localdamage.ToString()); }
     }
 }

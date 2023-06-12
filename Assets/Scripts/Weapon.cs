@@ -16,7 +16,7 @@ namespace Com.Albert.Kalashnikova
         public LayerMask canBeShot;
 
         private float currentCooldown;
-        private int currentIndex;
+        public int currentIndex;
         private GameObject currentWeapon;
         private bool isReloading;
 
@@ -32,6 +32,8 @@ namespace Com.Albert.Kalashnikova
         // Update is called once per frame
         void Update()
         {
+            if (Pause.paused && photonView.IsMine) return;
+
             //if (!photonView.IsMine) return;
             if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha1)) { photonView.RPC("Equip", RpcTarget.All, 0); }
             if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha2)) { photonView.RPC("Equip", RpcTarget.All, 1); }
@@ -141,7 +143,7 @@ namespace Com.Albert.Kalashnikova
                     if (t_hit.collider.gameObject.layer == 9)
                     {
                         // RPC Call to damage player goes here
-                        t_hit.collider.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, loadout[currentIndex].damage);
+                        t_hit.collider.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, loadout[currentIndex].GetDamage());
                     }
                 }
 
